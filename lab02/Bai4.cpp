@@ -19,8 +19,27 @@ typedef haiPhanSo PHANSO;
 void nhap(PHANSO &ps)
 {
 	char temp; // ki tu temp thuong nhap dau "/" de phan biet tu so va mau so
-	cout << "\nNhap phep tinh phan so can thuc hien: ";
-	cin >> ps.A.tuso >> temp >> ps.A.mauso >> ps.pheptinh >> ps.B.tuso >> temp >> ps.B.mauso;
+	char op = ps.pheptinh; // toan tu (phep tinh +, -, *, /)
+	do{
+		cout << "\nNhap phep tinh phan so can thuc hien: ";
+		cin >> ps.A.tuso >> temp >> ps.A.mauso >> ps.pheptinh >> ps.B.tuso >> temp >> ps.B.mauso;
+		if(ps.A.mauso == 0 || ps.B.mauso == 0)
+			cout << "\nMau so nhap vao phai khac 0. Xin kiem tra lai.\n";
+	}while((ps.A.mauso == 0) || (ps.B.mauso == 0));
+}
+
+int UCLN(int a, int b) // ham tim uoc chung lon nhat (ho tro rut gon phan so)
+{
+	if(a == 0)
+		return b;
+	return UCLN(b % a, a);
+}
+
+void rutGonPhanSo(PhanSo &x) // ham rut gon phan so
+{
+	int ucln = UCLN(x.tuso, x.mauso);
+	x.tuso = x.tuso / ucln;
+	x.mauso = x.mauso / ucln;
 }
 
 void TinhToan(PHANSO ps) // ham tinh toan cong, tru, nhan, chia 2 phan so
@@ -29,20 +48,40 @@ void TinhToan(PHANSO ps) // ham tinh toan cong, tru, nhan, chia 2 phan so
 	switch(ps.pheptinh)
 	{
 		case '+':{
-			kq.tuso = ps.A.tuso * ps.B.mauso + ps.B.tuso * ps.A.mauso;
-			kq.mauso = ps.A.mauso * ps.B.mauso;
+			if(ps.A.mauso == ps.B.mauso)
+			{
+				kq.tuso = ps.A.tuso + ps.B.tuso;
+				kq.mauso = ps.A.mauso;
+			}
+			else
+			{	
+				kq.tuso = ps.A.tuso * ps.B.mauso + ps.B.tuso * ps.A.mauso;
+				kq.mauso = ps.A.mauso * ps.B.mauso;
+			}
+			rutGonPhanSo(kq);
 			cout << "Ket qua la: " << kq.tuso << "/" << kq.mauso;
 			break;
 		}
 		case '-':{
-			kq.tuso = ps.A.tuso * ps.B.mauso - ps.B.tuso * ps.A.mauso;
-			kq.mauso = ps.A.mauso * ps.B.mauso;
+			if(ps.A.mauso == ps.B.mauso)
+			{
+				kq.tuso = ps.A.tuso - ps.B.tuso;
+				kq.mauso = ps.A.mauso;
+			}
+			else
+			{	
+				kq.tuso = ps.A.tuso * ps.B.mauso - ps.B.tuso * ps.A.mauso;
+				kq.mauso = ps.A.mauso * ps.B.mauso;
+			}
+			rutGonPhanSo(kq);
 			cout << "Ket qua la: " << kq.tuso << "/" << kq.mauso;
 			break;
 		}
 		case '*':{
 			kq.tuso = ps.A.tuso * ps.B.tuso;
 			kq.mauso = ps.A.mauso * ps.B.mauso;
+			
+			rutGonPhanSo(kq);
 			cout << "Ket qua la: " << kq.tuso << "/" << kq.mauso;
 			break;
 		}
@@ -50,10 +89,12 @@ void TinhToan(PHANSO ps) // ham tinh toan cong, tru, nhan, chia 2 phan so
 			kq.tuso = ps.A.tuso * ps.B.mauso;
 			kq.mauso = ps.A.mauso * ps.B.tuso;
 			cout << "Ket qua la: " << kq.tuso << "/" << kq.mauso;
+			
+			rutGonPhanSo(kq);
 			break;
 		}
 		default:{
-			cout << "\nPhep tinh nhap vao khong hop le. Xin kiem tra lai!";
+			cout << "\nPhep tinh khong hop le. Xin kiem tra lai!";
 			break;
 		}
 	}
@@ -73,6 +114,6 @@ void lapTinhToan() // ham lap lai tinh toan khac
 int main()
 {
 	lapTinhToan();
-		
+	
 	return 0;
 }
